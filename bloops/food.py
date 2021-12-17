@@ -1,4 +1,5 @@
 import numpy as np
+import pygame as pg
 
 
 class Food:
@@ -9,3 +10,8 @@ class Food:
 
     def spawn(self):
         self.pos = np.random.uniform(self.r, 1 - self.r, size=2)
+
+    def show(self, screen, scale):
+        pg.draw.rect(screen,
+                     color=np.random.randint(255, size=3),
+                     rect=(self.pos[0] * scale, self.pos[1] * scale, self.r * scale, self.r * scale))

@@ -1,5 +1,6 @@
 import numpy as np
 from dna import DNA
+import pygame as pg
 
 
 class Bloop:
@@ -35,6 +36,22 @@ class Bloop:
     def iterate(self):
         self.move()
         self.hp -= self.dt
+
+    def copy(self):
+        new_dna = self.dna.copy()
+        new_dna.mutate()
+        return Bloop(dna=new_dna,
+                     pos=np.copy(self.pos),
+                     hp=self.hp,
+                     dt=self.dt)
+
+    def show(self, screen, scale):
+        color = np.ones(3) * 255 * min(self.hp, 1)
+        color = color.astype(np.uint8)
+        pg.draw.circle(screen,
+                       color=color,
+                       center=(self.pos[0] * scale, self.pos[1] * scale),
+                       radius=self.r * scale)
 
 
 if __name__ == '__main__':

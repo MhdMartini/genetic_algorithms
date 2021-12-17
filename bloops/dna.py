@@ -14,3 +14,6 @@ class DNA:
             d_size = np.random.uniform()
             d_size *= np.random.choice([-1, 1])
             self.size_gene = min(max(0.001, self.size_gene + d_size), 0.03)
+
+    def copy(self):
+        return DNA(self.size_gene, self.mutation_rate)

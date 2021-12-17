@@ -8,7 +8,6 @@ from dna import DNA
 SCALE = 900
 bg_color = pg.Color(0, 0, 0)
 bloop_color = pg.Color(255, 255, 255)
-food_color = pg.Color(23, 53, 105)
 
 
 class BloopEnv:
@@ -28,27 +27,6 @@ class BloopEnv:
         pg.display.set_caption("Mohamed Martini - Bloops")
         return screen
 
-    def draw_bloop(self, bloop):
-        color = np.ones(3) * 255 * min(bloop.hp, 1)
-        color = color.astype(np.uint8)
-        pg.draw.circle(self.screen,
-                       color=color,
-                       center=(bloop.pos[0] * SCALE, bloop.pos[1] * SCALE),
-                       radius=bloop.r * SCALE)
-
-    def draw_food(self, food):
-        pg.draw.rect(self.screen,
-                     color=np.random.randint(255, size=3),
-                     rect=(food.pos[0] * SCALE, food.pos[1] * SCALE, food.r * SCALE, food.r * SCALE))
-
-    def copy_bloop(self, bloop):
-        new_dna = DNA(size_gene=bloop.dna.size_gene, mutation_rate=bloop.dna.mutation_rate)
-        new_dna.mutate()
-        return Bloop(dna=new_dna,
-                     pos=np.copy(bloop.pos),
-                     hp=bloop.hp,
-                     dt=bloop.dt)
-
     def main(self):
         self.screen = self.init_pg()
         self.clock = pg.time.Clock()
@@ -60,7 +38,6 @@ class BloopEnv:
             # handle bloops and food
             for idx in range(len(self.bloops) - 1, -1, -1):
                 bloop = bloops[idx]
-            # for bloop in self.bloops:
                 # iterate bloops
                 bloop.iterate()
                 if bloop.hp <= 0:
@@ -69,9 +46,9 @@ class BloopEnv:
                 elif bloop.hp > 2:
                     if len(self.bloops) < 20:
                         bloop.hp /= 2
-                        bloops.append(self.copy_bloop(bloop))
+                        bloops.append(bloop.copy())
                 # draw bloops
-                self.draw_bloop(bloop)
+                bloop.show(self.screen, SCALE)
                 # bloops eat food
                 for food in self.food:
                     # draw food
@@ -80,7 +57,7 @@ class BloopEnv:
                         food.spawn()
 
             for food in self.food:
-                self.draw_food(food)
+                food.show(self.screen, SCALE)
 
             pg.display.flip()
             for event in pg.event.get():
