@@ -36,7 +36,10 @@ class BloopEnv:
             self.screen.fill(bg_color)
 
             # handle bloops and food
-            for idx in range(len(self.bloops) - 1, -1, -1):
+            bloops_len = len(self.bloops)
+            if not bloops_len:
+                break
+            for idx in range(bloops_len - 1, -1, -1):
                 bloop = bloops[idx]
                 # iterate bloops
                 bloop.iterate()
@@ -69,28 +72,37 @@ class BloopEnv:
         pg.quit()
 
 
-if __name__ == '__main__':
-    # generate bloops
-    mutation_rate = 1e-2
-    dt = 1e-2
-    bloop_hp = 1
-    n_bloops = 10
+def make_bloops(n_bloops, mutation_rate, bloop_hp, dt):
     bloops = []
     for i in range(n_bloops):
         bloops.append(Bloop(dna=DNA(size_gene=None, mutation_rate=mutation_rate),
                             pos=None,
                             hp=bloop_hp,
                             dt=dt))
+    return bloops
+
+
+def make_food(n_food, food_hp, food_r):
+    food = []
+    for _ in range(n_food):
+        food.append(Food(hp=food_hp, r=food_r))
+    return food
+
+
+if __name__ == '__main__':
+    # generate bloops
+    mutation_rate = 1e-2
+    dt = 1e-2
+    bloop_hp = 1
+    n_bloops = 10
 
     # generate food
     n_food = 75
     food_hp = 1
     food_r = 5e-3
-    food = []
-    for i in range(n_food):
-        food.append(Food(food_hp, food_r))
 
-    env = BloopEnv(bloops=bloops,
-                   food=food,
-                   dt=dt)
-    env.main()
+    while not input("Press enter to continue..."):
+        bloops = make_bloops(n_bloops, mutation_rate, bloop_hp, dt)
+        food = make_food(n_food, food_hp, food_r)
+        env = BloopEnv(bloops, food, dt)
+        env.main()
